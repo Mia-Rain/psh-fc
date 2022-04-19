@@ -6,5 +6,29 @@ Usage
 -- $1 = number
 -- $2 = operator 
 -- $3 = number
--- eg: 1.89 ^~ 2
+-- eg:
+---- 1.89 ^~ 2
+---- 1.5 >/-gt 1.04
+---- 1 </-lt 3.14122
+---- 1.0051 -ne 1
+---- 1.231201 -eq 1.231201
+---- ...
+---
+Operator support:
+-- -eq -ne -gt -ge -lt -le -cl -fl
+---- -eq/==/=: equal to
+---- -ne/!==/=: not equal to
+---- -gt/>: greator than
+---- -ge/=>/>=: greator than or equal to
+---- -lt/<: less than
+---- -le/<=/=<: less than or equal to
+---- -cl/^~/~^/^=: equal after ceiling
+---- -fl/~/≈/≅: equal after floor
+---
+Caveats
+-- note that while no math is used here
+-- sh still has a maximum of 9223372036854775807
+-- if either whole or decimal is above this
+-- the number will overflow when interacted with by $(())
+-- ( to -922337203685477580... )
 ---
