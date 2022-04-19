@@ -2,3 +2,9 @@
 psh-fractional-compare (psh-fc)
 -- A library to replace [ ]/test
 ---
+Usage
+-- $1 = number
+-- $2 = operator 
+-- $3 = number
+-- eg: 1.89 ^~ 2
+---
