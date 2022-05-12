@@ -8,6 +8,7 @@ Usage
 -- $3 = number
 -- eg:
 ---- 1.89 ^~ 2
+---- 1.89 ~ 1
 ---- 1.5 >/-gt 1.04
 ---- 1 </-lt 3.14122
 ---- 1.0051 -ne 1
@@ -24,6 +25,10 @@ Operator support:
 ---- -le/<=/=<: less than or equal to
 ---- -cl/^~/~^/^=: equal after ceiling
 ---- -fl/~/≈/≅: equal after floor
+-- Additonal support for -a/-o and ! is now present
+---- -a: literal and
+---- -o: literal or
+---- !: literal false
 ---
 Caveats
 -- note that while no math is used here
