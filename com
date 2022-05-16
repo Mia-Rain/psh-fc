@@ -32,12 +32,14 @@ gt() {
   # now compare $d1 to $d2
   # 0.10 > 0.01
   # 100 > 1
+  #echo "$d1 $d2"
   until [ "${d1#0}" = "${d1}" ]; do
     d1="${d1#0}"; d2="${d2}0"
   done
   until [ "${d2#0}" = "${d2}" ]; do 
     d2="${d2#0}"; d1="${d1}0"
   done
+  #echo "$d1 $d2"
   [ "$3" ] && {
     [ "${d1:-0}" -gt "${d2:-0}" -o "${d1:-0}" -eq "${d2:-0}" -a "${w1:-0}" -eq "${w2:-0}" ] && {
       return 0
@@ -98,13 +100,13 @@ hexit() { # handle exits
   case "$@" in
     *'-a'*) [ "$ecode" -eq 0 ] && {
       args="${@}"; args="${args##*:}"
-      ${0} ${args##? $op ? -a }; ecode=$? 
+      ${0} ${args##$n1 $op $n2 -a }; ecode=$? 
     } || exit $ecode ;;
     # if exit code is != 0 then all other calls for -a don't matter
     # as a single 1 will cause the final result to be 1
     *'-o'*) [ "$ecode" -eq 1 ] && {
       args="${@}"; args="${args##*:}" 
-      ${0} ${args##? $op ? -o }; ecode=$?
+      ${0} ${args##$n1 $op $n2 -o }; ecode=$?
     } || exit $ecode
     # as above
     ##
@@ -133,6 +135,13 @@ com() { # this allows for recusion for -a/-o handling
   # [ ! ] causes exit code to swap
   [ ! -z "${n1##*.*}" ] && n1="${n1}.0"
   [ ! -z "${n2##*.*}" ] && n2="${n2}.0"
+  [ "$n1" != '0' ] && until [ "${n1%0}" = "$n1" ]; do
+    n1="${n1%0}"
+  done && [ "${n1%%.*}" = "${n1%.}" ] && n1="${n1%.}.0"
+  [ "$n2" != '0' ] && until [ "${n2%0}" = "$n2" ]; do
+    n2="${n2%0}"
+  done && [ "${n2%%.*}" = "${n2%.}" ] && n2="${n2%.}.0"
+  #echo "$n1 $op $n2 | $@"
   case "$op" in
     '^~'|'~^'|'^='|'-cl') ceil "$n1" "$n2" || hexit 1 ":$@";;
     '~'|'≈'|'≅'|'-fl') floor "$n1" "$n2" || hexit 1 ":$@";;
