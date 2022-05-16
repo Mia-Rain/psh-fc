@@ -131,7 +131,8 @@ com() { # this allows for recusion for -a/-o handling
     }
   }
   # [ ! ] causes exit code to swap
-  #echo "$@"
+  [ ! -z "${n1##*.*}" ] && n1="${n1}.0"
+  [ ! -z "${n2##*.*}" ] && n2="${n2}.0"
   case "$op" in
     '^~'|'~^'|'^='|'-cl') ceil "$n1" "$n2" || hexit 1 ":$@";;
     '~'|'≈'|'≅'|'-fl') floor "$n1" "$n2" || hexit 1 ":$@";;
@@ -147,4 +148,5 @@ com() { # this allows for recusion for -a/-o handling
   hexit 0 ":$@" # exit 0 if done
   echo "$? --"
 }
+args="$@"; args="${args##[}"; args="${args%%]}"; set -- $args
 com "$@"
