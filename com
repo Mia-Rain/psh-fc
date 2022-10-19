@@ -89,6 +89,18 @@ eq() { # use $3 for -ne
     } || return 1
   }
 }
+nm() { # only $1 should have a value # ie -nm 1.5 = 0 # -nm * = 1
+  w="${1%.*}"; d="${1#*.}"
+  [ "$w" ] || return 1
+  #echo "-- | $@ $w $d"
+  [ ! "$( [ "$w" -eq "$w" ] 2>&1 )" ] && { # check if $w = $w using -eq # checks if number
+    #echo "-- $w : ${d:-0} | $@"
+    [ "$d" -a -z "${1##*.*}" ] && {
+      [ ! "$( [ "$d" -eq "$d" ] 2>&1 )" ] && return 0
+      return 1
+    } || return 0
+  }
+} # tests if $1 is a number # supports floats
 hexit() { # handle exits 
 # allow for ! handling
   ecode="$1"
@@ -128,10 +140,18 @@ com() { # this allows for recusion for -a/-o handling
       [ "$2" ] && hexit 0 ":$@"
       hexit 1 ":$@"
     } || {
-      [ "$1" ] && hexit 0 ":$@"
-      hexit 1 ":$@"
+      [ "$1" -a ! "$2" ] && hexit 0 ":$@"
+      [ ! "$2" ] && hexit 1 ":$@"
     }
   }
+  [ ! "$3" ] && {
+    op="$1" #; echo "$@ --"
+    case "$op" in
+      '-nm'|'-nn') nm "$2" || hexit 1 ":$@"
+    esac
+    # echo '??'
+    hexit 0 ":$@"
+  } # TODO this is only for single argument operations 
   # [ ! ] causes exit code to swap
   [ ! -z "${n1##*.*}" ] && n1="${n1}.0"
   [ ! -z "${n2##*.*}" ] && n2="${n2}.0"
@@ -151,7 +171,7 @@ com() { # this allows for recusion for -a/-o handling
     '-le'|'<='|'=<') lt "$n1" "$n2" "-" || hexit 1 ":$@";;
     # or equal to is set via $3
     '-eq'|'=='|'=') eq "$n1" "$n2" || hexit 1 ":$@";;
-    '-ne'|'!=='|'!=') eq "$n1" "$n2" "-" || hexit 1 ":$@"
+    '-ne'|'!=='|'!=') eq "$n1" "$n2" "-" || hexit 1 ":$@";;
     # -ne uses $3 with -eq
   esac
   hexit 0 ":$@" # exit 0 if done
